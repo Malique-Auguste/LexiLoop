@@ -12,7 +12,7 @@ const app = express()
 //ensures that request body is accessible
 app.use(express.json())
 
-//assigns the router
+//assigns the router to the address after '/api'
 app.use("/api", router)
 
 //enables router

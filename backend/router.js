@@ -1,28 +1,28 @@
 //importing required packages
 const express = require("express")
-const WordModel = require("./models/word_model")
+const {
+    get_words,
+    get_word,
+    add_word,
+    delete_word
+} = require("./controllers/controller")
+
 
 //creates the router
 const router = express.Router()
 
 //logs every request that comes in
 router.use((req, res, next) => {
-    console.log(req.path, req.method, req.body)
+    console.log(req.method, req.path, req.query, req.body)
 
     next()
 })
 
-//temporary path for testing the creation of a WordModel based on user input
-router.post("/", async (req, res) => {
-    const {spelling, definition, difficulty} = req.body
-
-    try {
-        const word = await WordModel.create({spelling, definition, difficulty})
-        res.status(200).json(word)
-    } catch (error) {
-        res.status(400).json({error: error.message})
-    }
-})
+//assignment of paths
+router.get("/", get_words)
+router.get("/single", get_word)
+router.post("/", add_word)
+router.delete("/", delete_word)
 
 //exports router
 module.exports = router
