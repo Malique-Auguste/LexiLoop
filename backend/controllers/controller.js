@@ -14,9 +14,16 @@ async function get_words(req, res) {
 //gets all words
 async function get_word(req, res) {
     try {
-        const spelling = req.query.spelling
+        const {spelling} = req.params
+
         const word = (await WordModel.find({spelling}))[0]
-        res.status(200).json(word)
+
+        if (word != undefined) {
+            res.status(200).json(word)
+        }
+        else {
+            res.status(400).json({error: spelling + " not in database"})
+        }
     } catch (error) {
         res.status(400).json({error: error.message})
     }
@@ -27,16 +34,14 @@ async function add_word(req, res) {
     const {spelling, definition, difficulty} = req.body
 
     try {
-        //checks if word already exists in the list first
+        //ensures word doesn't already exist in the list first
         if ((await WordModel.find({spelling})).length == 0) {
             const word = await WordModel.create({spelling, definition, difficulty})
             res.status(200).json(word)
         }
         else {
-            res.status(400).json({error: "Word already in database"})
-        }
-
-        
+            res.status(400).json({error: spelling + " already in database"})
+        }        
     } catch (error) {
         res.status(400).json({error: error.message})
     }
@@ -44,8 +49,7 @@ async function add_word(req, res) {
 
 //deletes word from database
 async function delete_word(req, res) {
-    const spelling = req.query.spelling
-    console.log(spelling)
+    const {spelling} = req.params
 
     try {
         const delete_result = await WordModel.deleteOne({spelling})
@@ -56,11 +60,30 @@ async function delete_word(req, res) {
 }
 
 
+//updates word from databse
+async function update_word(req, res) {
+    const { spelling } = req.params
+    
+    try {
+        //checks if word exists in the list first
+        if ((await WordModel.find({spelling})).length != 0) {
+            const word = await WordModel.findOneAndUpdate({spelling}, {...req.body})
+            res.status(200).json(spelling + " successfully updated.")
+        }
+        else {
+            res.status(400).json({error: spelling + " not in database"})
+        }
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
 
 //exports functions
 module.exports = {
     get_words,
     get_word,
     add_word,
-    delete_word
+    delete_word,
+    update_word
 }
