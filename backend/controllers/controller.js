@@ -91,16 +91,24 @@ async function search(req, res) {
             })
     } catch (error) {
         console.log(error)
-        res.status(400).json({"error": error.message})
+        try {
+            await suggester_api(spelling)
+                .then(output => {
+                    console.log(output)
+                    res.status(200).json(output)
+                })
+        } catch (error) {
+            console.log(error)
+            res.status(400).json({"error": error.message})
+        }
     }
-    
 }
 
 async function definer_api(word) {
     const stem = "https://api.dictionaryapi.dev/api/v2/entries/en/"
     const api_call = stem + word
 
-    const temp = fetch(api_call)
+    const output = fetch(api_call)
         //checks if word is found
         .then(response => {
             if (response.ok) {
@@ -113,7 +121,7 @@ async function definer_api(word) {
         }) 
         //if the word is found, its definitions are returned
         .then(data_list => {
-            output = []
+            var definitions_list = []
 
             //searches through response object and identifies the definitions for each word
             data_list.forEach(item => {
@@ -127,18 +135,134 @@ async function definer_api(word) {
                         definitions.push(definition["definition"])
                     })
 
-                    output.push([part_of_speech, definitions])
+                    definitions_list.push([part_of_speech, definitions])
                 })
             })
 
-            return output
+            return definitions_list
         })
 
-    return temp
+    return output
 }
 
 async function suggester_api(word) {
+    const stem_spelling = "https://api.datamuse.com/words?sp="
+    const stem_sound = "https://api.datamuse.com/words?sl="
+    const stem_complete = "https://api.datamuse.com/sug?s="
+    const ending = "&max=2"
 
+    var api_call = stem_spelling + word + ending
+
+    var output = await fetch(api_call)
+        //checks if word is found
+        .then(response => {
+            console.log("dsa")
+
+            if (response.ok) {
+                data_list = response.json()
+                return data_list
+            }
+            else {
+                throw new Error("No return from similar spelling")
+            }
+        }) 
+        //if the word is found, its similarly spelt words are returned
+        .then(data_list => {
+            var word_list = []
+
+            //searches through response object and identifies the definitions for each word
+            data_list.forEach(item => {
+                similar_spelling = item["word"]
+                word_list.push(similar_spelling)
+            })
+
+            return word_list
+        })
+        .catch(error => {
+            console.log(error)
+        });
+
+    console.log("asd")
+    console.log(output)
+
+    api_call = stem_sound + word + ending
+
+    output = output.concat(await fetch(api_call)
+        //checks if word is found
+        .then(response => {
+            if (response.ok) {
+                data_list = response.json()
+                return data_list
+            }
+            else {
+                throw new Error("No return from similar sounding")
+            }
+        }) 
+        //if the word is found, its similar sounding words are returned
+        .then(data_list => {
+            var word_list = []
+
+            //searches through response object and identifies the definitions for each word
+            data_list.forEach(item => {
+                similar_sounding = item["word"]
+                word_list.push(similar_sounding)
+            })
+            
+            console.log(word_list)
+            return word_list
+        })
+        .catch(error => {
+            console.log(error)
+        })
+    )
+
+    api_call = stem_complete + word + ending
+
+    console.log("vfr")
+    console.log(output)
+
+    output = output.concat(await fetch(api_call)
+        //checks if word is found
+        .then(response => {
+            if (response.ok) {
+                data_list = response.json()
+                return data_list
+            }
+            else {
+                throw new Error("No return from auto-complete")
+            }
+        }) 
+        //if the word is found, its auto-complete words are returned
+        .then(data_list => {
+            var word_list = []
+
+            //searches through response object and identifies the definitions for each word
+            data_list.forEach(item => {
+                auto_completed = item["word"]
+                if (auto_completed.split(" ").length == 1) {
+                    word_list.push(auto_completed)
+                }                
+            })
+            
+            console.log(word_list)
+            return word_list
+        })
+        .catch(error => {
+            console.log(error)
+        })
+    )
+
+    if (output.length <= 3) {
+        throw new Error("Similarly spelt or sounding words not found.")
+    }
+
+    output = [... new Set(output)]
+    output = output.filter(element => {
+        return element != word
+    })
+
+    return output
+    
 }
 
 
