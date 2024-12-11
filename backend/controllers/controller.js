@@ -78,6 +78,39 @@ async function update_word(req, res) {
     }
 }
 
+//define word 
+async function search(req, res) {
+    console.log("searching")
+    const { spelling } = req.params
+
+    try {
+        console.log("response")
+        const stem = "https://api.dictionaryapi.dev/api/v2/entries/en/"
+        const api_call = stem + spelling
+        console.log(api_call)
+
+        fetch(api_call)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+                else {
+                    throw new Error("Word not found");
+                }
+            }) 
+            .then(data => {
+                console.log(data);
+                console.log(data[0]["meanings"])
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            }); 
+
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
 
 //exports functions
 module.exports = {
@@ -85,5 +118,6 @@ module.exports = {
     get_word,
     add_word,
     delete_word,
-    update_word
+    update_word,
+    search
 }

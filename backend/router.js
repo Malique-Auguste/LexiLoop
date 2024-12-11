@@ -5,7 +5,8 @@ const {
     get_word,
     add_word,
     delete_word,
-    update_word
+    update_word,
+    search
 } = require("./controllers/controller")
 
 
@@ -25,6 +26,7 @@ router.get("/:spelling", get_word)
 router.post("/", add_word)
 router.delete("/:spelling", delete_word)
 router.patch("/:spelling", update_word)
+router.get("/search/:spelling", search)
 
 //exports router
 module.exports = router
