@@ -1,0 +1,69 @@
+:root {
+  font-size: 16px;
+  --gray-0: hsl(0, 0%, 95%);
+  --gray-1: hsl(0, 0%, 90%);
+  --gray-2: hsl(0, 0%, 80%);
+}
+
+* {
+  border: none;
+  margin: 0;
+  padding: 0;
+  background-color: rgba(0, 0, 0, 0);
+  color: black;
+}
+
+p, span, li, input, button {
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 1.6rem;
+}
+
+#search-page {
+  width: min-content;
+  height: min-content;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#title {
+  font-family: "GFS Neohellenic", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 16rem;
+}
+
+#search-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  background-color: var(--gray-0);
+  border-radius: 5rem;
+
+  margin-top: 1rem;
+  padding: 0.5rem;
+}
+
+#search-bar > input {
+  padding-left: 0.5rem;
+}
+
+#search-bar > input:focus {
+  outline: none;
+}
+
+#search-bar:has(input:focus), #search-bar:hover {
+  background-color: var(--gray-1);
+}
+
+#search-bar > button {
+  font-size: 1rem;
+  color: white;
+  background-color: var(--gray-2);
+  border-radius: 5rem;
+  padding: 0.5rem;
+}

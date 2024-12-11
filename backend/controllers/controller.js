@@ -84,31 +84,61 @@ async function search(req, res) {
     const { spelling } = req.params
 
     try {
-        console.log("response")
-        const stem = "https://api.dictionaryapi.dev/api/v2/entries/en/"
-        const api_call = stem + spelling
-        console.log(api_call)
-
-        fetch(api_call)
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                }
-                else {
-                    throw new Error("Word not found");
-                }
-            }) 
-            .then(data => {
-                console.log(data);
-                console.log(data[0]["meanings"])
+        await definer_api(spelling)
+            .then(output => {
+                console.log(output)
+                res.status(200).json(output)
             })
-            .catch(error => {
-                console.error('Error:', error);
-            }); 
-
     } catch (error) {
-        res.status(400).json({error: error.message})
+        console.log(error)
+        res.status(400).json({"error": error.message})
     }
+    
+}
+
+async function definer_api(word) {
+    const stem = "https://api.dictionaryapi.dev/api/v2/entries/en/"
+    const api_call = stem + word
+
+    const temp = fetch(api_call)
+        //checks if word is found
+        .then(response => {
+            if (response.ok) {
+                data_list = response.json()
+                return data_list
+            }
+            else {
+                throw new Error("Word not found");
+            }
+        }) 
+        //if the word is found, its definitions are returned
+        .then(data_list => {
+            output = []
+
+            //searches through response object and identifies the definitions for each word
+            data_list.forEach(item => {
+                meanings = item["meanings"]
+
+                meanings.forEach(meaning => {
+                    part_of_speech = meaning["partOfSpeech"]
+                    definitions = []
+
+                    meaning["definitions"].forEach(definition => {
+                        definitions.push(definition["definition"])
+                    })
+
+                    output.push([part_of_speech, definitions])
+                })
+            })
+
+            return output
+        })
+
+    return temp
+}
+
+async function suggester_api(word) {
+
 }
 
 
