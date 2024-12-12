@@ -153,11 +153,10 @@ async function suggester_api(word) {
 
     var api_call = stem_spelling + word + ending
 
+    //identifies 1 similarly spelt word
     var output = await fetch(api_call)
         //checks if word is found
         .then(response => {
-            console.log("dsa")
-
             if (response.ok) {
                 data_list = response.json()
                 return data_list
@@ -182,11 +181,9 @@ async function suggester_api(word) {
             console.log(error)
         });
 
-    console.log("asd")
-    console.log(output)
-
     api_call = stem_sound + word + ending
 
+    //identifies 1 similar sounding word
     output = output.concat(await fetch(api_call)
         //checks if word is found
         .then(response => {
@@ -207,8 +204,7 @@ async function suggester_api(word) {
                 similar_sounding = item["word"]
                 word_list.push(similar_sounding)
             })
-            
-            console.log(word_list)
+        
             return word_list
         })
         .catch(error => {
@@ -218,9 +214,7 @@ async function suggester_api(word) {
 
     api_call = stem_complete + word + ending
 
-    console.log("vfr")
-    console.log(output)
-
+    //finds word that could be made by completing the list
     output = output.concat(await fetch(api_call)
         //checks if word is found
         .then(response => {
@@ -238,13 +232,10 @@ async function suggester_api(word) {
 
             //searches through response object and identifies the definitions for each word
             data_list.forEach(item => {
-                auto_completed = item["word"]
-                if (auto_completed.split(" ").length == 1) {
-                    word_list.push(auto_completed)
-                }                
+                auto_completed = item["word"]                
+                word_list.push(auto_completed)
             })
             
-            console.log(word_list)
             return word_list
         })
         .catch(error => {
@@ -252,14 +243,33 @@ async function suggester_api(word) {
         })
     )
 
-    if (output.length <= 3) {
-        throw new Error("Similarly spelt or sounding words not found.")
-    }
-
+    //removes duplicates of the orignal word from output
     output = [... new Set(output)]
-    output = output.filter(element => {
-        return element != word
+    output = output.filter(item => {
+        return (item != word) && (item.split(" ").length == 1)
     })
+
+    console.log(output)
+    const promises = output.map(async (item) => {
+        return definer_api(item)
+            .then(res => {
+                if (res != undefined) {
+                    return [item, true]
+                }
+            })
+            .catch(_ => {
+                return [item, false]
+            })
+    })
+
+    var output_mapped = await Promise.all(promises)
+
+    output_mapped = output_mapped.filter(item => item[1])
+    output = output_mapped.map(item => item[0])
+
+    if (output.length == 0) {
+        throw new Error("Word provided doesn't have similar words")
+    }
 
     return output
     
