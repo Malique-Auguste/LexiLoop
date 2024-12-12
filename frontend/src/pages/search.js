@@ -1,4 +1,9 @@
 import { useState } from 'react'
+import { renderToString } from 'react-dom/server'
+
+import WordPartialDefinition from '../components/word_definition'
+
+
 
 const Search = () => {
     const [word, setWord] = useState('')
@@ -21,6 +26,13 @@ const Search = () => {
             }) 
             .then(data => {
                 console.log(data);
+                const word_definition_root = document.getElementById("WordDefinition")
+
+                word_definition_root.replaceChildren(...
+                    data.map(word_partial_definition_data => {
+                        return renderToString(WordPartialDefinition(word_partial_definition_data))
+                    })
+                )
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -38,6 +50,9 @@ const Search = () => {
                     onChange={(e) => setWord(e.target.value)}/>
                 <button type="submit">Save</button>
             </form>
+            <div id = "WordDefinition">
+
+            </div>
         </div>
     )
 }

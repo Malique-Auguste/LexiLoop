@@ -135,7 +135,7 @@ async function definer_api(word) {
                         definitions.push(definition["definition"])
                     })
 
-                    definitions_list.push([part_of_speech, definitions])
+                    definitions_list.push({"part_of_speech": part_of_speech, "definitions": definitions})
                 })
             })
 
