@@ -131,6 +131,12 @@ async function definer_api(word) {
                     part_of_speech = meaning["partOfSpeech"]
                     definitions = []
 
+                    //removes excessive definitions for words. 
+                    // see the word "hi" with and without this if statement commented out to understand
+                    if (meaning["definitions"].length > 3) {
+                        meaning["definitions"] = meaning["definitions"].slice(0, 3)
+                    }
+
                     meaning["definitions"].forEach(definition => {
                         definitions.push(definition["definition"])
                     })
