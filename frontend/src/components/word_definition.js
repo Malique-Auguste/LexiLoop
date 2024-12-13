@@ -1,5 +1,6 @@
 const WordPartialDefinition = (word_data) => {
     const {part_of_speech, definitions} = word_data
+    console.log("defs", definitions)
 
     var i = 0
 
@@ -10,15 +11,12 @@ const WordPartialDefinition = (word_data) => {
                 {
                     definitions.map((definition) => {
                         i += 1
-                        return <li className="Definition" key = {i} >definition</li>
+                        return (<li className="Definition" key = {i} >{definition}</li>)
                     })
                 }
             </ul>
         </li>
     )
-
-    console.log("list")
-    console.log(list_object)
 
     return list_object
 }

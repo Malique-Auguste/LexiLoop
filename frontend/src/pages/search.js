@@ -1,12 +1,10 @@
 import { useState } from 'react'
-import { renderToString } from 'react-dom/server'
-
+import { useSearchContext } from '../hooks/useSearchContext'
 import WordPartialDefinition from '../components/word_definition'
-
-
 
 const Search = () => {
     const [word, setWord] = useState('')
+    const {state, dispatch} = useSearchContext()
 
     async function update_search(e) {
         e.preventDefault()
@@ -25,14 +23,11 @@ const Search = () => {
                 }
             }) 
             .then(data => {
-                console.log(data);
-                const word_definition_root = document.getElementById("WordDefinition")
-
-                word_definition_root.replaceChildren(...
-                    data.map(word_partial_definition_data => {
-                        return renderToString(WordPartialDefinition(word_partial_definition_data))
-                    })
-                )
+                const new_state = data.map(word_partial_definition_data => {
+                    return WordPartialDefinition(word_partial_definition_data)
+                })
+                
+                dispatch({type: "LOAD_SEARCH_RESULT", payload: new_state})                
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -50,9 +45,9 @@ const Search = () => {
                     onChange={(e) => setWord(e.target.value)}/>
                 <button type="submit">Save</button>
             </form>
-            <div id = "WordDefinition">
-
-            </div>
+            <ol id = "WordDefinition">
+                {state}
+            </ol>
         </div>
     )
 }
