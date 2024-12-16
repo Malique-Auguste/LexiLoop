@@ -15,6 +15,7 @@ const Search = () => {
 
         fetch(api_call)
             .then(response => {
+                console.log("fetching")
                 if (response.ok) {
                     return response.json()
                 }
@@ -22,14 +23,14 @@ const Search = () => {
                     throw new Error("Word not found");
                 }
             }) 
-            .then(data => {
-                const {meanings_list} = data
+            .then(word_model => {
+                const {meanings_list} = word_model
 
                 const new_state = meanings_list.map(word_partial_definition_data => {
                     return WordPartialDefinition(word_partial_definition_data)
                 })
-                
-                dispatch({type: "LOAD_SEARCH_RESULT", payload: new_state})                
+                console.log("new", new_state)
+                dispatch({type: "LOAD_SEARCH_RESULT", payload: {model: word_model, html: new_state}})                
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -48,7 +49,7 @@ const Search = () => {
                 <button type="submit">Save</button>
             </form>
             <ol id = "WordDefinition">
-                {state}
+                {state && state.html}
             </ol>
         </div>
     )

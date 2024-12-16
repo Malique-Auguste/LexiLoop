@@ -1,6 +1,5 @@
 const WordPartialDefinition = (word_data) => {
     const {part_of_speech, definitions} = word_data
-    console.log("defs", definitions)
 
     var i = 0
 

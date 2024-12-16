@@ -1,5 +1,4 @@
 import { createContext, useReducer } from 'react'
-import WordPartialDefinition from "../components/word_definition"
 
 export const SearchContext = createContext()
 
