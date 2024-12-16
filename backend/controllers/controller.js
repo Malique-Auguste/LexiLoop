@@ -1,5 +1,5 @@
 //importing required modules
-const WordModel = require("../models/word_model")
+const {WordModel, MeaningModel} = require("../models/models")
 
 //gets all words
 async function get_words(req, res) {
@@ -31,12 +31,18 @@ async function get_word(req, res) {
 
 //adds word to database
 async function add_word(req, res) {
-    const {spelling, definition, difficulty} = req.body
+    const {spelling, meanings_list, difficulty} = req.body
 
     try {
         //ensures word doesn't already exist in the list first
         if ((await WordModel.find({spelling})).length == 0) {
-            const word = await WordModel.create({spelling, definition, difficulty})
+            var meanings_models = []
+            meanings_list.forEach(meaning => {
+                const {part_of_speech, definitions} = meaning
+                meanings_models.push(new MeaningModel({part_of_speech, definitions}))
+            })
+
+            const word = await WordModel.create({spelling, meanings_list: meanings_models, difficulty})
             res.status(200).json(word)
         }
         else {
@@ -118,16 +124,16 @@ async function definer_api(word) {
             else {
                 throw new Error("Word not found");
             }
-        }) 
+        })
         //if the word is found, its definitions are returned
         .then(data_list => {
-            var definitions_list = []
+            var meaning_models = []
 
             //searches through response object and identifies the definitions for each word
             data_list.forEach(item => {
-                meanings = item["meanings"]
+                const meanings_list = item["meanings"]
 
-                meanings.forEach(meaning => {
+                meanings_list.forEach(meaning => {
                     part_of_speech = meaning["partOfSpeech"]
                     definitions = []
 
@@ -141,11 +147,11 @@ async function definer_api(word) {
                         definitions.push(definition["definition"])
                     })
 
-                    definitions_list.push({"part_of_speech": part_of_speech, "definitions": definitions})
+                    meaning_models.push(new MeaningModel({part_of_speech, definitions}))
                 })
             })
 
-            return definitions_list
+            return new WordModel({spelling: word, meanings_list: meaning_models, difficulty: 0.5})
         })
 
     return output

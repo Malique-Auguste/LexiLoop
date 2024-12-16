@@ -23,7 +23,9 @@ const Search = () => {
                 }
             }) 
             .then(data => {
-                const new_state = data.map(word_partial_definition_data => {
+                const {meanings_list} = data
+
+                const new_state = meanings_list.map(word_partial_definition_data => {
                     return WordPartialDefinition(word_partial_definition_data)
                 })
                 
