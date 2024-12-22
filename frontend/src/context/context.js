@@ -1,10 +1,10 @@
 import { createContext, useReducer } from 'react'
 
-export const SearchContext = createContext()
+export const AppContext = createContext()
 
-export function searchReducer(state, action) {
+export function contextReducer(state, action) {
     switch (action.type) {
-        case "LOAD_SEARCH_RESULT":
+        case "LOAD":
             return {
                 "state": action.payload
             }
@@ -17,15 +17,15 @@ export function searchReducer(state, action) {
     }
 }
 
-export const SearchContextProvider = ({children}) => {
+export const AppContextProvider = ({children}) => {
 
-    const [state, dispatch] = useReducer(searchReducer, {
+    const [state, dispatch] = useReducer(contextReducer, {
         "state": null
     })
 
     return (
-        <SearchContext.Provider value={{ ...state, dispatch}}>
+        <AppContext.Provider value={{ ...state, dispatch}}>
             { children }
-        </SearchContext.Provider>
+        </AppContext.Provider>
     )
 }

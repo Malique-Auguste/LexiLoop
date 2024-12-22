@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { useSearchContext } from '../hooks/useSearchContext'
+import { Link } from 'react-router-dom'
+
+import { useAppContext } from '../hooks/useSearchContext'
 import WordPartialDefinition from '../components/word_definition'
 
 const Search = () => {
     const [word, setWord] = useState('')
-    const {state, dispatch} = useSearchContext()
+    const {state, dispatch} = useAppContext()
 
     async function update_search(e) {
         e.preventDefault()
@@ -30,7 +32,7 @@ const Search = () => {
                     return WordPartialDefinition(word_partial_definition_data)
                 })
                 console.log("new", new_state)
-                dispatch({type: "LOAD_SEARCH_RESULT", payload: {model: word_model, html: new_state}})                
+                dispatch({type: "LOAD", payload: {model: word_model, html: new_state}})                
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -80,6 +82,7 @@ const Search = () => {
             <ol id = "WordDefinition">
                 {state && state.html}
             </ol>
+            <Link to="study">Study</Link>
         </div>
     )
 }

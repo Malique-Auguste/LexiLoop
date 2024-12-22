@@ -1,12 +1,12 @@
 import { useContext } from "react"
-import { SearchContext } from "../context/search_context"
+import { AppContext } from "../context/context"
 
 
-export function useSearchContext() {
-    const context = useContext(SearchContext)
+export function useAppContext() {
+    const context = useContext(AppContext)
 
     if (!context) {
-        throw new Error("useSearchContext can only be used from within search context")
+        throw new Error("useAppContext can only be used from within app context")
     }
 
     return context
