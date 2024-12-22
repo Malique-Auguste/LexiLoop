@@ -37,6 +37,34 @@ const Search = () => {
             }); 
     }
 
+    async function save_word(e) {
+        console.log("saving word")
+        console.log(state.model)
+        console.log(JSON.stringify(state.model))
+        const api_call = "/api/"
+
+        if (!state) {
+            reset()
+            return
+        }
+
+        fetch(api_call, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json', // Specify the content type
+            },
+            body: JSON.stringify(state.model)
+        }).then(_ => {
+            reset()
+            console.log("Success")
+        })
+    }
+    
+    function reset() {
+        document.getElementById("search-bar").reset()
+        dispatch({type: "RESET"})
+    }
+
     return (
         <div id="search-page">
             <h1 id = "title">LexiLoop</h1>
@@ -46,7 +74,8 @@ const Search = () => {
                     id="word" 
                     placeholder="Type word here"
                     onChange={(e) => setWord(e.target.value)}/>
-                <button type="submit">Save</button>
+                <button type="button"
+                    onClick={save_word}>Save</button>
             </form>
             <ol id = "WordDefinition">
                 {state && state.html}

@@ -6,8 +6,10 @@ async function get_words(req, res) {
     try {
         const words = await WordModel.find({}).sort({createdAt: -1})
         res.status(200).json(words)
+        console.log("Success")
     } catch (error) {
         res.status(400).json({error: error.message})
+        console.log("Failure")
     }
 }
 
@@ -20,12 +22,15 @@ async function get_word(req, res) {
 
         if (word != undefined) {
             res.status(200).json(word)
+            console.log("Success")
         }
         else {
             res.status(400).json({error: spelling + " not in database"})
+            console.log("Failure")
         }
     } catch (error) {
         res.status(400).json({error: error.message})
+        console.log("Failure")
     }
 }
 
@@ -44,12 +49,16 @@ async function add_word(req, res) {
 
             const word = await WordModel.create({spelling, meanings_list: meanings_models, difficulty})
             res.status(200).json(word)
+            console.log("Success")
+
         }
         else {
             res.status(400).json({error: spelling + " already in database"})
+            console.log("Failure")
         }        
     } catch (error) {
         res.status(400).json({error: error.message})
+        console.log("Failure")
     }
 }
 
@@ -60,8 +69,11 @@ async function delete_word(req, res) {
     try {
         const delete_result = await WordModel.deleteOne({spelling})
         res.status(200).json(delete_result)
+        console.log("Success")
+
     } catch (error) {
         res.status(400).json({error: error.message})
+        console.log("Failure")
     }
 }
 
@@ -75,12 +87,16 @@ async function update_word(req, res) {
         if ((await WordModel.find({spelling})).length != 0) {
             const word = await WordModel.findOneAndUpdate({spelling}, {...req.body})
             res.status(200).json(spelling + " successfully updated.")
+           console.log("Success")
+
         }
         else {
             res.status(400).json({error: spelling + " not in database"})
+            console.log("Failure")
         }
     } catch (error) {
         res.status(400).json({error: error.message})
+        console.log("Failure")
     }
 }
 
@@ -94,6 +110,8 @@ async function search(req, res) {
             .then(output => {
                 console.log(output)
                 res.status(200).json(output)
+                console.log("Success")
+
             })
     } catch (error) {
         console.log(error)
@@ -102,10 +120,12 @@ async function search(req, res) {
                 .then(output => {
                     console.log(output)
                     res.status(200).json(output)
+                    console.log("Success")
                 })
         } catch (error) {
             console.log(error)
             res.status(400).json({"error": error.message})
+            console.log("Failure")
         }
     }
 }

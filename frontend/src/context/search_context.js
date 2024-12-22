@@ -8,7 +8,10 @@ export function searchReducer(state, action) {
             return {
                 "state": action.payload
             }
-    
+        case "RESET":
+            return {
+                "state": null
+            }
         default:
             return state
     }
