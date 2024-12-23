@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAppContext } from '../hooks/useSearchContext'
+import { useAppContext } from '../hooks/useAppContext'
 import FlashcardV1 from '../components/flashcards'
 
 const Study = () => {
@@ -26,9 +26,7 @@ const Study = () => {
         }
     }
 
-    function change_alternate() {
-        dispatch({type:"LOAD", payload: {all_words: state.all_words, flashcard_types: state.flashcard_types, alternate: !state.alternate}})
-    }
+    
 
     console.log("gr1v", state)
 

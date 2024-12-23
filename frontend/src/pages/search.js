@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { useAppContext } from '../hooks/useSearchContext'
+import { useAppContext } from '../hooks/useAppContext'
 import WordPartialDefinition from '../components/word_definition'
 
 const Search = () => {
