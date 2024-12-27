@@ -9,7 +9,7 @@ const FlashcardV1 = (word_model, alternate) => {
 
     function change_alternate() {
         console.log("alternate changed")
-        dispatch({type:"LOAD", payload: {all_words: state.all_words, flashcard_types: state.flashcard_types, alternate: !state.alternate}})
+        dispatch({type:"LOAD", payload: {all_words: state.all_words, current_word_i: state.current_word_i, flashcard_i: state.flashcard_i, next: state.next,  alternate: !state.alternate}})
     }
 
     if(!alternate) {

@@ -1,8 +1,10 @@
 //import required modules
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import { useAppContext } from './hooks/useAppContext'
+
 import Search from "./pages/search"
 import Study from "./pages/study"
-
 
 function App() {
   return (

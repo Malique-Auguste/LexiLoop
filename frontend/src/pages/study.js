@@ -2,33 +2,41 @@ import { useState } from 'react'
 import { useAppContext } from '../hooks/useAppContext'
 import FlashcardV1 from '../components/flashcards'
 
+const flashcard_types = [FlashcardV1]
+
+
 const Study = () => {
     const {state, dispatch} = useAppContext()
 
-    const flashcard_types = [FlashcardV1]
-
-    var all_words = []
-
-    function build_html() {
-        if (state != null) {
-            console.log("fgu", state)
-            const word_i = Math.floor(Math.random() * state.all_words.length);
-            console.log("fgut", word_i)
-
-            const word = state.all_words[word_i]
-
-            const flashcard_i = Math.floor(Math.random() * state.flashcard_types.length);
-            console.log("fguai", flashcard_i)
-
-            const flashcard = state.flashcard_types[flashcard_i]
-
-            return flashcard(word, state.alternate)
-        }
+    function reset() {
+        document.getElementById("search-bar").reset()
+        dispatch({type: "RESET"})
     }
 
-    
+    function build_html() {
+        console.log("fgu", (state != null) && state.next, state)
 
-    console.log("gr1v", state)
+        if ((state != null)) {
+            console.log("building")
+
+            var word_i = state.current_word_i
+            var flashcard_i = state.flashcard_i
+            if (state.next) {
+                const word_i = Math.floor(Math.random() * state.all_words.length);
+                const flashcard_i = Math.floor(Math.random() * flashcard_types.length);
+
+                //stops flashcard from reloading on reload of page
+                dispatch({type:"LOAD", payload: {all_words: state.all_words, current_word_i: word_i, flashcard_i: flashcard_i, next:false, alternate: state.alternate}})
+            }
+
+            const word = state.all_words[word_i]
+            const flashcard_maker = flashcard_types[flashcard_i]
+            return flashcard_maker(word, state.alternate)
+
+
+            
+        }
+    }
 
     const api_call = "/api"
     if(state == null) {
@@ -42,18 +50,17 @@ const Study = () => {
                     throw new Error("Word not found");
                 }
             }) 
-            .then(words => {
-                all_words = words
+            .then(all_words => {
                 console.log("ssf")
-            })
-            .then(_ => {
-                dispatch({type:"LOAD", payload: {all_words: all_words, flashcard_types: flashcard_types, alternate: false}})
+                dispatch({type:"LOAD", payload: {all_words: all_words, current_word_i: 0, flashcard_i: 0, next:true, alternate: false}})
             })
     }
 
-    return (
-        <div id = "study-page">a {build_html()} </div>
-    )
+    else {
+        return (
+            <div id = "study-page">a {build_html()} </div>
+        )
+    }
     
         /*
         */
